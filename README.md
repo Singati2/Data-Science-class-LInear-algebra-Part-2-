@@ -6,6 +6,8 @@ Class slides for **Solving Systems of Linear Equations**.
 |---|---|
 | `Linear_Algebra_Week2_Slides.pptx` | The deck (57 slides, 16:9), editable in PowerPoint / Keynote / Google Slides |
 | `Linear_Algebra_Week2_Slides.pdf` | The same deck as a PDF for projecting or sharing |
+| `Linear_Algebra_Week2_Lecture_Notes.pdf` | Lecture notes: one entry per slide (slide image, what to say, full worked arithmetic) |
+| `lecture_notes.py`, `build_notes_pdf.py` | Source of the notes and the script that builds the notes PDF |
 | `build_slides.py` | Python source that generates the deck (`python3 build_slides.py`, needs `python-pptx`) |
 | `assets_rank_compression.png` | Low-rank image-compression figure used on the rank slide (built from matplotlib's bundled public-domain sample photo) |
 
