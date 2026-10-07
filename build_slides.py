@@ -286,8 +286,71 @@ topics = [
 for i, (t, b) in enumerate(topics):
     col, row = i % 2, i // 2
     card(s, 0.6 + col * 6.2, 1.75 + row * 1.55, 5.95, 1.35, t, b, number=i + 1)
-text(s, 0.6, 6.45, 12, 0.4, "Three short in-class quizzes are built into the session: after non-singular systems, after singular systems, and after rank.",
+text(s, 0.6, 6.45, 12, 0.4, "We start with the machine-learning motivation. Three short in-class quizzes follow: after non-singular systems, after singular systems, and after rank.",
      size=15, color=GREY, italic=True)
+
+# ================================================= MOTIVATION ==============
+s = new_slide(dark=True)
+text(s, 0.6, 2.2, 6, 0.4, "MOTIVATION", size=16, color=AMBER_L, bold=True)
+text(s, 0.6, 2.7, 11.5, 1.6, "Why systems of linear equations matter in machine learning", size=48, font=HEAD, color=WHITE, bold=True)
+text(s, 0.6, 4.6, 9.5, 1.2, "Behind every neural network, regression model and recommender system sits a matrix. "
+     "This week is about what those matrices tell us and how to solve for them.", size=20, color=LIGHT, spacing=1.2)
+
+# Neural networks are matrix operations ---------------------------------------
+s = new_slide("Neural networks are matrix operations", "Machine learning motivation")
+layers = [4, 5, 5, 1]
+xs = [3.2, 5.0, 6.8, 8.6]
+node_pos = []
+for li, (n, x) in enumerate(zip(layers, xs)):
+    top = 4.3 - (n - 1) * 0.39
+    pos = [(x, top + k * 0.78) for k in range(n)]
+    node_pos.append(pos)
+for li in range(len(layers) - 1):
+    for (x1, y1) in node_pos[li]:
+        for (x2, y2) in node_pos[li + 1]:
+            line(s, x1 + 0.16, y1, x2 - 0.16, y2, color="C9D3E6", lw=0.75)
+for li, pos in enumerate(node_pos):
+    for (x, y) in pos:
+        d = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x - 0.16), Inches(y - 0.16), Inches(0.32), Inches(0.32))
+        d.shadow.inherit = False; d.fill.solid()
+        d.fill.fore_color.rgb = rgb(AMBER if li == len(layers) - 1 else TEAL); d.line.fill.background()
+line(s, 1.9, 4.3, 2.95, 4.3, color=TEAL, lw=1.5)
+arrow(s, 8.85, 4.15, w=0.9, h=0.3)
+text(s, 0.6, 3.65, 1.4, 1.4, "Input\n(pixels, audio,\nfeatures)", size=13, color=GREY, align="c")
+text(s, 9.85, 3.85, 1.6, 1.0, "Output\n(a prediction)", size=13, color=GREY, align="c")
+for x, lab in zip([3.2, 5.0, 6.8, 8.6], ["Matrix W₁", "Matrix W₂", "Matrix W₃", "Matrix W₄"]):
+    rect(s, x - 0.6, 6.15, 1.2, 0.42, fill=TINT, rounded=True, radius=0.1)
+    text(s, x - 0.6, 6.15, 1.2, 0.42, lab, size=12, color=NAVY, align="c", anchor="m", bold=True)
+    line(s, x, 6.15, x, 5.95, color=TEAL, lw=1.5)
+text(s, 0.6, 1.6, 12.1, 1.2,
+     "A neural network is a chain of layers. Each layer multiplies its input by a matrix of weights and adds a bias. "
+     "Running the network is matrix multiplication; training it is solving for the entries of those matrices.",
+     size=17, color=GREY, spacing=1.2)
+text(s, 0.6, 6.65, 12.1, 0.35, "Everything this week (solving systems, row reduction, rank) is the toolkit for reasoning about these matrices.",
+     size=14, color=NAVY, bold=True)
+
+# Where linear systems show up ------------------------------------------------
+s = new_slide("Where this shows up in data science", "Machine learning motivation")
+apps = [
+    ("Sound recognition", "ACOUSTIC MONITORING",
+     "Underwater microphones record the sounds of fish and marine mammals; a neural network classifies the species. "
+     "Tracking species through sound helps preserve bio-habitats. The audio becomes a matrix of features, and the "
+     "network is a stack of matrix operations."),
+    ("AI-generated music", "GENERATIVE MODELS",
+     "Automatic music generation compresses music into discrete codes, then trains a model on a specific genre to "
+     "produce new pieces. Learning the compression and the generator means fitting very large matrices."),
+    ("Linear regression", "THE SIMPLEST MODEL",
+     "Fitting a line (or a hyperplane) to data means solving the normal equations XᵀX β = Xᵀy: a system of linear "
+     "equations in the coefficients β. Whether it has one solution, many, or none is exactly today's question."),
+]
+for i, (t_, eye, body) in enumerate(apps):
+    x = 0.6 + i * 4.1
+    rect(s, x, 1.7, 3.9, 4.7, fill=TINT, rounded=True, radius=0.05)
+    text(s, x + 0.25, 1.85, 3.4, 0.3, eye, size=11, color=TEAL, bold=True)
+    text(s, x + 0.25, 2.15, 3.4, 0.5, t_, size=20, bold=True)
+    text(s, x + 0.25, 2.75, 3.4, 3.5, body, size=15, color=GREY, spacing=1.2)
+text(s, 0.6, 6.55, 12.1, 0.4, "Same mathematics in each case: data in a matrix, unknowns in a vector, equations linking them.",
+     size=15, color=NAVY, bold=True)
 
 # ===================================================== PART 1 · SYSTEMS =====
 divider(1, "Solving systems of linear equations",
@@ -306,7 +369,10 @@ text(s, 8.3, 1.7, 4.4, 0.35, "EXAMPLES", size=12, color=TEAL, bold=True)
 eqs(s, 8.3, 2.1, ["a + b = 10", "a + 2b = 12"], w=4.4)
 text(s, 8.3, 3.1, 4.4, 0.6, "two equations, two unknowns; the solution is a = 8, b = 2", size=14, color=GREY)
 eqs(s, 8.3, 3.9, ["a + b + 2c = 12", "3a − 3b − c = 3", "2a − b + 6c = 24"], w=4.4)
-text(s, 8.3, 5.35, 4.4, 0.6, "three equations, three unknowns; we solve it later today", size=14, color=GREY)
+text(s, 8.3, 5.35, 4.4, 0.5, "three equations, three unknowns; we solve it later today", size=14, color=GREY)
+text(s, 8.3, 5.95, 4.4, 0.3, "DATA SCIENCE CONNECTION", size=11, color=AMBER, bold=True)
+text(s, 8.3, 6.22, 4.4, 0.7, "Fitting a linear regression means solving the normal equations XᵀX β = Xᵀy, a system of exactly this kind.",
+     size=13, color=GREY, spacing=1.1)
 
 # 5 · A system and its solution ----------------------------------------------
 s = new_slide("A system and its solution", "Solving systems of equations")
@@ -641,6 +707,17 @@ text(s, 0.6, 6.4, 12, 0.5, "A determinant that is zero stays zero, and one that 
 divider(3, "Rank of a matrix",
         "Two equations do not always carry two pieces of information. Rank measures how much they really say.")
 
+# Compressing images: reducing rank ------------------------------------------
+s = new_slide("Compressing images: reducing rank", "Rank of a matrix")
+s.shapes.add_picture("assets_rank_compression.png", Inches(0.6), Inches(1.6), width=Inches(12.1))
+text(s, 0.6, 4.5, 12.1, 2.2, [
+    [("A grayscale image is a matrix", {"bold": True, "color": NAVY}),
+     (": one number per pixel. This one is 300 × 256 and has rank 256, so it carries 256 independent pieces of information.", {})],
+    "Keeping only the k most important pieces (a rank-k approximation) rebuilds the picture from far fewer numbers: "
+    "rank 1 is just stripes, rank 15 is recognisable, rank 50 is close to the original.",
+    "Rank is the amount of information in a matrix. The same idea powers image compression, principal component analysis and recommender systems.",
+], size=16, color=GREY, spacing=1.2, after=8)
+
 # 25 · Systems of information ------------------------------------------------
 s = new_slide("Systems of information", "Rank of a matrix")
 info = [
@@ -708,10 +785,12 @@ for i, (m, r, tag, fill) in enumerate(rs):
     matrix(s, x + 1.25, 2.05, m, cw=0.6, ch=0.52, size=18)
     text(s, x + 0.25, 3.35, 3.4, 0.6, r, size=26, font=HEAD, bold=True, align="c")
     text(s, x + 0.25, 4.1, 3.4, 0.6, tag, size=20, color=TEAL, bold=True, align="c")
-defbox(s, 0.6, 5.35, 12.1, 1.3, [
+defbox(s, 0.6, 5.2, 12.1, 1.6, [
     [("A square n × n matrix is non-singular exactly when its rank equals n (", {}), ("full rank", {"bold": True}),
      ("). Any smaller rank means at least one row carries no new information: the matrix is singular.", {})],
-], label="Fact")
+    [("Data science connection. ", {"bold": True, "color": AMBER}),
+     ("If two feature columns are proportional (collinear), XᵀX loses rank and least squares has no unique solution.", {})],
+], label="Fact", size=15)
 
 # 29 · Quiz 3 -----------------------------------------------------------------
 s = new_slide(dark=True)
@@ -1072,12 +1151,14 @@ steps = [
 ]
 for i, (t, b) in enumerate(steps):
     x = 0.6 + i * 3.08
-    card(s, x, 1.7, 2.9, 3.55, t, b, number=i + 1, tsize=16, bsize=14)
+    card(s, x, 1.7, 2.9, 3.3, t, b, number=i + 1, tsize=16, bsize=14)
     if i < 3:
         arrow(s, x + 2.88, 3.5, w=0.26, h=0.3)
-defbox(s, 0.6, 5.45, 12.1, 1.35, [
+defbox(s, 0.6, 5.2, 12.1, 1.65, [
     [("Gaussian elimination", {"bold": True}), (" is this procedure: elementary row operations applied to the augmented matrix until it is in (reduced) row echelon form.", {})],
-], label="Definition", size=15)
+    [("Data science connection. ", {"bold": True, "color": AMBER}),
+     ("This is what numpy.linalg.solve and R's solve() run under the hood (with row swaps chosen for numerical stability) whenever a model fits a linear system.", {})],
+], label="Definition", size=14)
 
 # 53 · Recap -------------------------------------------------------------------
 s = new_slide(dark=True)
